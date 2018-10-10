@@ -1,21 +1,6 @@
 #include <memory>
 #include <iostream>
 
-class A
-{
-  virtual void f()
-    {
-    }
-};
-
-class B : public A
-{
-};
-
-class C : public A
-{
-};
-
 // These are from: https://stackoverflow.com/a/11003103
 
 template <typename T_DEST, typename T_SRC, typename T_DELETER>
@@ -54,6 +39,18 @@ dynamic_pointer_move(std::unique_ptr<T_SRC> & src)
   return dest_temp;
 }
 
+class A
+{
+  virtual void f() {}
+};
+
+class B : public A
+{
+};
+
+class C : public A
+{
+};
 
 int main()
 {
