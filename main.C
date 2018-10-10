@@ -1,11 +1,11 @@
 #include <memory>
 #include <iostream>
 
-// These are from: https://stackoverflow.com/a/11003103
+// These are reworked from from: https://stackoverflow.com/a/11003103
 
 template <typename T_DEST, typename T_SRC, typename T_DELETER>
 std::unique_ptr<T_DEST, T_DELETER>
-dynamic_pointer_move(std::unique_ptr<T_SRC, T_DELETER> & src)
+dynamic_pointer_cast(std::unique_ptr<T_SRC, T_DELETER> & src)
 {
   if (!src)
     return std::unique_ptr<T_DEST, T_DELETER>(nullptr);
@@ -23,7 +23,7 @@ dynamic_pointer_move(std::unique_ptr<T_SRC, T_DELETER> & src)
 
 template <typename T_SRC, typename T_DEST>
 std::unique_ptr<T_DEST>
-dynamic_pointer_move(std::unique_ptr<T_SRC> & src)
+dynamic_pointer_cast(std::unique_ptr<T_SRC> & src)
 {
   if (!src)
     return std::unique_ptr<T_DEST>(nullptr);
@@ -61,13 +61,13 @@ int main()
   std::unique_ptr<C> c_ptr;
 
   {
-    auto worked = dynamic_pointer_move<C>(c);
+    auto worked = dynamic_pointer_cast<C>(c);
     std::cout << "Worked: " << (bool)worked << std::endl;
   }
 
 
   {
-    auto worked = dynamic_pointer_move<C>(b);
+    auto worked = dynamic_pointer_cast<C>(b);
     std::cout << "Worked: " << (bool)worked << std::endl;
   }
 }
