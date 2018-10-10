@@ -52,9 +52,18 @@ class C : public A
 {
 };
 
+struct ADeleter
+{
+  void operator()(A* a)
+  {
+    std::cout << " Deleting " << std::endl;
+    delete a;
+  }
+};
+
 int main()
 {
-  std::unique_ptr<A> b(new B);
+  std::unique_ptr<A, ADeleter> b(new B);
 
   std::unique_ptr<A> c(new C);
 
