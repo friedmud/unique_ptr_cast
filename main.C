@@ -18,45 +18,40 @@ class C : public A
 
 // These are from: https://stackoverflow.com/a/11003103
 
-template <typename T_SRC, typename T_DEST, typename T_DELETER>
-bool
-dynamic_pointer_move(std::unique_ptr<T_DEST, T_DELETER> & dest,
-                     std::unique_ptr<T_SRC, T_DELETER> & src)
+template <typename T_DEST, typename T_SRC, typename T_DELETER>
+std::unique_ptr<T_DEST, T_DELETER>
+dynamic_pointer_move(std::unique_ptr<T_SRC, T_DELETER> & src)
 {
   if (!src)
-  {
-    dest.reset();
-    return true;
-  }
+    return std::unique_ptr<T_DEST, T_DELETER>(nullptr);
 
   T_DEST * dest_ptr = dynamic_cast<T_DEST *>(src.get());
   if (!dest_ptr)
-    return false;
+    return std::unique_ptr<T_DEST, T_DELETER>(nullptr);
 
   std::unique_ptr<T_DEST, T_DELETER> dest_temp(dest_ptr, std::move(src.get_deleter()));
 
   src.release();
-  dest.swap(dest_temp);
-  return true;
+
+  return dest_temp;
 }
 
 template <typename T_SRC, typename T_DEST>
-bool
-dynamic_pointer_move(std::unique_ptr<T_DEST> & dest, std::unique_ptr<T_SRC> & src)
+std::unique_ptr<T_DEST>
+dynamic_pointer_move(std::unique_ptr<T_SRC> & src)
 {
   if (!src)
-  {
-    dest.reset();
-    return true;
-  }
+    return std::unique_ptr<T_DEST>(nullptr);
 
   T_DEST * dest_ptr = dynamic_cast<T_DEST *>(src.get());
   if (!dest_ptr)
-    return false;
+    return std::unique_ptr<T_DEST>(nullptr);
+
+  std::unique_ptr<T_DEST> dest_temp(dest_ptr);
 
   src.release();
-  dest.reset(dest_ptr);
-  return true;
+
+  return dest_temp;
 }
 
 
@@ -69,13 +64,13 @@ int main()
   std::unique_ptr<C> c_ptr;
 
   {
-    auto worked = dynamic_pointer_move(c_ptr, c);
-    std::cout << "Worked: " << worked << std::endl;
+    auto worked = dynamic_pointer_move<C>(c);
+    std::cout << "Worked: " << (bool)worked << std::endl;
   }
 
 
   {
-    auto worked = dynamic_pointer_move(c_ptr, b);
-    std::cout << "Worked: " << worked << std::endl;
+    auto worked = dynamic_pointer_move<C>(b);
+    std::cout << "Worked: " << (bool)worked << std::endl;
   }
 }
